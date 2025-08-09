@@ -4,7 +4,7 @@
 int addition(int a, int b) { return a + b; }
 int soustraction(int a, int b) { return abs(a - b); }
 int multiplication(int a, int b) { return a * b; }
-int division(int a, int b) { return (a != 0 && b != 0) ? a / b : 1; }
+int division(int a, int b) { return (a != 0 && b != 0) ? a / b : 0; }
 
 int main(int argc, char *argv[]) {
     int nbr1 = 0, nbr2 = 0;
@@ -20,7 +20,10 @@ int main(int argc, char *argv[]) {
             std::cout << multiplication(nbr1, nbr2) << std::endl;
         } else if (std::string(argv[i]) == "--div") {
             nbr1 = atoi(argv[i+1]), nbr2 = atoi(argv[i+2]);
-            std::cout << division(nbr1, nbr2) << std::endl;
+            if (division(nbr1, nbr2) == 0)
+                std::cout << "Erreur Division par 0" << std::endl;
+            else
+                std::cout << division(nbr1, nbr2) << std::endl;
         }
     }
     return 0;
