@@ -1,7 +1,4 @@
-#include <iostream>
-#include <string>
-#include <cmath>
-#include <utility>
+#include "utils.hpp"
 
 int addition(int a, int b) { return a + b; }
 int soustraction(int a, int b) { return a - b; }
