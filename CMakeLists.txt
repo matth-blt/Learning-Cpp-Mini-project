@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(Calculator)
+project(MiniProjetC)
 
 add_executable(calculator calculator.cpp)
 add_executable(hello_world hello_world.cpp)
