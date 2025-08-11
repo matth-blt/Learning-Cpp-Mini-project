@@ -7,6 +7,7 @@ int division(int a, int b) { return a / b; }
 bool division_checker(int b) { return b == 0; }
 double puissance(int a, int b) { return pow(a, b); }
 int modulo(int a, int b) { return a % b; }
+
 std::pair<int, int> lire_nombres(int i, char* argv[]) {
     try {
         return { std::stoi(argv[i+1]), std::stoi(argv[i+2]) };
@@ -15,6 +16,7 @@ std::pair<int, int> lire_nombres(int i, char* argv[]) {
         return {0, 0};
     }
 }
+
 void print_help_calculator() {
     std::cout << ".\\calculator.exe"
                  " --add {nbr1} {nbr2}"
