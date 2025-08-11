@@ -1,6 +1,5 @@
 #include "utils.hpp"
 
-
 Unite string_to_unite(const std::string& s) {
     if (s == "km") return km;
     if (s == "hm") return hm;
@@ -28,6 +27,14 @@ double conversion(int nbr, Unite u1, Unite u2) {
     return val_m / facteur[u2];
 }
 
+void print_help_convertissor() {
+    std::cout << ".\\convertissor.exe"
+                 " convert"
+                 " {nbr}"
+                 " {u1}"
+                 " {u2}" << std::endl;
+}
+
 int main(int argc, char *argv[]) {
     int nbr = 0; 
     Unite u1, u2;
@@ -42,6 +49,8 @@ int main(int argc, char *argv[]) {
             }
             auto [u1, u2] = recup_msr(i, argv);
             std::cout << conversion(nbr, u1, u2) << argv[i+3] << std::endl;
+        } else if (arg == "--help") {
+            print_help_convertissor();
         }
     }
     return 0;

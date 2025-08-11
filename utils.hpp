@@ -16,7 +16,7 @@ bool division_checker(int b);
 double puissance(int a, int b);
 int modulo(int a, int b);
 std::pair<int, int> lire_nombres(int i, char *argv[]);
-void print_help();
+void print_help_calculator();
 // ------------------------ Convertissor -------------------------
 enum Unite { km, hm, dam, m, dm, cm, mm };
 std::map<Unite, double> facteur = {
@@ -31,5 +31,6 @@ std::map<Unite, double> facteur = {
 Unite string_to_unite(const std::string& s);
 std::pair<Unite, Unite> recup_msr(int i, char *argv[]);
 double conversion(int nbr, Unite u1, Unite u2);
+void print_help_convertissor();
 
 #endif

@@ -15,7 +15,7 @@ std::pair<int, int> lire_nombres(int i, char* argv[]) {
         return {0, 0};
     }
 }
-void print_help() {
+void print_help_calculator() {
     std::cout << ".\\calculator.exe"
                  " --add {nbr1} {nbr2}"
                  " --sous {nbr1} {nbr2}"
@@ -75,7 +75,7 @@ int main(int argc, char *argv[]) {
                 std::cerr << "Arguments insuffisants pour " << argv[i] << std::endl;
             }
         } else if (arg == "--help") {
-           print_help();
+           print_help_calculator();
         }
     }
     return 0;
