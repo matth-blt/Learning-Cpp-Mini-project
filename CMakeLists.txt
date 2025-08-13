@@ -3,6 +3,8 @@ project(MiniProjetC)
 
 add_executable(calculator calculator.cpp)
 add_executable(hello_world hello_world.cpp)
+add_executable(convertissor convertissor.cpp)
+add_executable(guess_nbr guess_nbr.cpp)
 
 # Version minimale de CMake requise
 # cmake_minimum_required(VERSION 3.10)
