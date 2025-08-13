@@ -36,7 +36,7 @@ void print_help_convertissor() {
 }
 
 int main(int argc, char *argv[]) {
-    int nbr = 0; 
+    int nbr{}; 
     Unite u1, u2;
     for (int i = 1; i < argc; i++) {
         std::string arg = argv[i];

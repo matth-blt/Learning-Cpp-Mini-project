@@ -28,7 +28,7 @@ void print_help_calculator() {
 }
 
 int main(int argc, char *argv[]) {
-    int nbr1 = 0, nbr2 = 0;
+    int nbr1{}, nbr2{};
     for (int i = 1; i < argc; i++) {
         std::string arg = argv[i];
         if (arg == "--add") {
