@@ -6,6 +6,8 @@
 #include <cmath>
 #include <utility>
 #include <map>
+#include <cstdlib>
+#include <ctime>
 
 // ------------------------ Calculator --------------------------
 int addition(int a, int b);
@@ -32,5 +34,9 @@ Unite string_to_unite(const std::string& s);
 std::pair<Unite, Unite> recup_msr(int i, char *argv[]);
 double conversion(int nbr, Unite u1, Unite u2);
 void print_help_convertissor();
+// ------------------------ Guess Number -------------------------
+int random_nbr(int limit);
+bool check_nbr(int nbr, int bot_nbr);
+void print_help_guess_nbr();
 
 #endif
