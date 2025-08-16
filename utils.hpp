@@ -8,6 +8,7 @@
 #include <map>
 #include <cstdlib>
 #include <ctime>
+#include <cstdio>
 
 // ------------------------ Calculator --------------------------
 int addition(int a, int b);
