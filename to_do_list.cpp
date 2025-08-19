@@ -1,7 +1,35 @@
 #include "utils.hpp"
 
-void write_in_file(std::string txt, char fichier[256]) {
-    FILE *f = fopen(fichier, "w");
+void add_task(const std::string& task, int importance, const char* fichier = "List.txt") {
+    std::ifstream in(fichier);
+    std::vector<std::string> tasks;
+    std::string line;
+
+    while (std::getline(in, line)) {
+        size_t pos = line.find("- ");
+        if (pos != std::string::npos)
+            tasks.push_back(line.substr(pos + 2));
+        else
+            tasks.push_back(line);
+    }
+    in.close();
+
+    size_t pos = tasks.size(); 
+    if (importance == 1) {    
+        pos = 0;
+    } else if (importance == 2) {
+        pos = tasks.size() / 2;
+    } else if (importance == 3) {
+        pos = tasks.size();
+    }
+
+    tasks.insert(tasks.begin() + pos, task);
+
+    std::ofstream out(fichier, std::ios::trunc);
+    for (size_t i = 0; i < tasks.size(); ++i) {
+        out << (i+1) << "- " << tasks[i] << "\n";
+    }
+    out.close();
 }
 void choice_1() {
     std::string txt;
@@ -9,7 +37,7 @@ void choice_1() {
     
     std::cout << "---------| VOTRE TACHE |--------" << std::endl;
     std::cout << "--> ";
-    std::getline(std::cin, txt);
+    std::getline(std::cin >> std::ws, txt);
     
     system("cls");
     
@@ -22,6 +50,8 @@ void choice_1() {
     std::cout << "--------------------------------" << std::endl;
     std::cout << "--> ";
     std::cin >> importance;
+
+    add_task(txt, importance);
 }
 void choice_2() {
     

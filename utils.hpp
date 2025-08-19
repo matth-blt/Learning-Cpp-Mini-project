@@ -9,6 +9,8 @@
 #include <cstdlib>
 #include <ctime>
 #include <cstdio>
+#include <fstream>
+#include <vector>
 
 // ------------------------ Calculator --------------------------
 int addition(int a, int b);
@@ -39,5 +41,7 @@ void print_help_convertissor();
 int random_nbr(int limit);
 bool check_nbr(int nbr, int bot_nbr);
 void print_help_guess_nbr();
+
+void importance_choice(int importance, std::string txt);
 
 #endif
