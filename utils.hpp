@@ -41,7 +41,33 @@ void print_help_convertissor();
 int random_nbr(int limit);
 bool check_nbr(int nbr, int bot_nbr);
 void print_help_guess_nbr();
+// ------------------------ To Do List -------------------------
+void add_task(const std::string& task, int importance, const char* fichier = "List.txt");
+void choice_1();
+// ------------------------ Banque -------------------------
+class Compte {
+private:
+    std::string titulaire;
+    int solde;
+    int dette;
+    bool credit;
+public:
+    int get_solde() { return solde; };
+    void set_solde(int s) { s = solde; };
+    int get_dette() { return dette; };
+    void set_dette(int d) { d = dette; };
+    bool get_credit() { return credit; };
+    void set_credit(int c) { credit = c; };
 
-void importance_choice(int importance, std::string txt);
+    void afficher() const {
+        std::cout << "Titulaire: " << titulaire
+                  << " | Solde: " << solde
+                  << " | Dette: " << dette
+                  << " | Credit: " << (credit ? "oui" : "non")
+                  << std::endl;
+    }
+
+    Compte(const std::string& n, int s, int d, bool c) : titulaire(n), solde(s), dette(d), credit(c) {};
+};
 
 #endif

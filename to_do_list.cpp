@@ -79,7 +79,6 @@ int main(int argc, char *argv[]) {
             case 3: system("cls"); choice_3(); break;
         }
     } while (choice != 0);
-
-
+    
     return 0;
 }
