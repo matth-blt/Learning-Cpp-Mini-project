@@ -73,5 +73,7 @@ public:
 
     Compte(const std::string& n, int s, int d, bool c) : titulaire(n), solde(s), dette(d), credit(c) {};
 };
+Compte new_client();
+void faire_depot(std::vector<Compte>& clients);
 
 #endif
