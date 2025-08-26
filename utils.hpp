@@ -53,11 +53,13 @@ private:
     bool credit;
 public:
     int get_solde() { return solde; };
-    void set_solde(int s) { s = solde; };
+    void set_solde(int s) { solde = s; };
     int get_dette() { return dette; };
-    void set_dette(int d) { d = dette; };
+    void set_dette(int d) { dette = d; };
     bool get_credit() { return credit; };
     void set_credit(int c) { credit = c; };
+    std::string get_titulaire() const { return titulaire; }
+    void set_titulaire(std::string n) { titulaire = n; }
 
     void afficher() const {
         std::cout << "Titulaire: " << titulaire
@@ -66,6 +68,8 @@ public:
                   << " | Credit: " << (credit ? "oui" : "non")
                   << std::endl;
     }
+
+    Compte() : titulaire("Inconnu"), solde(0), dette(0), credit(false) {}
 
     Compte(const std::string& n, int s, int d, bool c) : titulaire(n), solde(s), dette(d), credit(c) {};
 };
