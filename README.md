@@ -10,3 +10,15 @@ This repo is a collection of mini projects in C++ that I created to learn to mas
 - ex: `.\convertissor.exe convert 10 m cm`
 - result: `1000cm`
 - help: `.\convertissor.exe --help`
+
+## Guess Number
+- ex: `.\guess_nbr.exe --limit 10`
+- result:  
+`-----------| Deviner le nombre |-----------`  
+`--> 5`  
+`Plus petit`  
+`--> 2`  
+`Plus grand`  
+`--> 3`  
+`Trouvé ! Bien joué`  
+- help: `.\guess_nbr.exe --help`
