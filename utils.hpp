@@ -75,5 +75,6 @@ public:
 };
 Compte new_client();
 void faire_depot(std::vector<Compte>& clients);
+void print_help_banque();
 
 #endif

@@ -50,6 +50,15 @@ void faire_depot(std::vector<Compte>& clients) {
     }
 }
 
+void print_help_banque() {
+    std::cout << "Choix 1 : Ajoute un Nouveau Client à la Banque" << std::endl;
+    std::cout << "- Vous rentrez le Nom, le Solde (argent sur le compte) et la dette (s'il y a un credit déjà contracté)\n" << std::endl;
+    std::cout << "Choix 2 : Effectue un Depot d'argent" << std::endl;
+    std::cout << "- Vous vous connecter a votre compte (s'il exsite sinon vous le creer) et vous renseigner la somme a ajouter a votre livret\n" << std::endl;
+    std::cout << "Choix 3 : Effectue une Transaction entre vous et un autre client de la banque" << std::endl;
+    std::cout << "- Vous vous connecter a votre compte (s'il exsite sinon vous le creer)";
+}
+
 int main(void) {
     int choice;
     std::vector<Compte> clients;
@@ -59,7 +68,8 @@ int main(void) {
         std::cout << "|1|    Ajouter Client      |" << std::endl;
         std::cout << "|2|        Depot           |" << std::endl;
         std::cout << "|3|     Transaction        |" << std::endl;
-        std::cout << "|4|   Afficher Clients     |" << std::endl;
+        std::cout << "|4|       Emprunt          |" << std::endl;
+        std::cout << "|5|   Afficher Clients     |" << std::endl;
         std::cout << "|0|        Exit            |" << std::endl;
         std::cout << "|-1|       Help            |" << std::endl;
         std::cout << "----------------------------" << std::endl;
@@ -79,7 +89,7 @@ int main(void) {
                 faire_depot(clients);
             }
             break;
-            case 4: {
+            case 5: {
                 int i = 1;
                 for (const auto& c : clients) {
                     std::cout << "----------------------| Client n°" << i << " |----------------------" << std::endl;
@@ -90,6 +100,7 @@ int main(void) {
                 }
             }
             break;
+            case -1: print_help_banque(); break;
         }
     } while (choice != 0);
 
