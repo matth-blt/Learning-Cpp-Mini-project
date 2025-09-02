@@ -22,6 +22,31 @@ Compte new_client() {
     return Compte(n, s, d, c);
 }
 
+Compte login(std::vector<Compte>& clients) {
+    std::string n;
+    std::cout << "---------| LOGIN |---------" << std::endl;
+    std::cout << "Nom du Titulaire : ";
+    std::getline(std::cin >> std::ws, n);
+
+    bool found = false;
+
+    for (auto& c : clients) {
+        if (c.get_titulaire() == n) {
+            std::cout << "Compte Trouvé !" << std::endl;
+            return c;
+            found = true;
+            break;
+        }
+    }
+
+    if (!found) {
+        std::cout << "Compte Inexistant !" << std::endl;
+        std::cout << "---------| CREER VOTRE COMPTE |---------" << std::endl;
+        Compte c = new_client();
+        clients.push_back(c);
+    }
+}
+
 void faire_depot(std::vector<Compte>& clients) {
     int s; 
     std::string n;
@@ -50,13 +75,24 @@ void faire_depot(std::vector<Compte>& clients) {
     }
 }
 
+void faire_transaction(std::vector<Compte>& clients) {
+    int choice;
+
+    std::string n;
+    std::cout << "---------| LOGIN |---------" << std::endl;
+    std::cout << "Nom du Titulaire : ";
+    std::getline(std::cin >> std::ws, n);
+
+
+}
+
 void print_help_banque() {
     std::cout << "Choix 1 : Ajoute un Nouveau Client à la Banque" << std::endl;
     std::cout << "- Vous rentrez le Nom, le Solde (argent sur le compte) et la dette (s'il y a un credit déjà contracté)\n" << std::endl;
     std::cout << "Choix 2 : Effectue un Depot d'argent" << std::endl;
     std::cout << "- Vous vous connecter a votre compte (s'il exsite sinon vous le creer) et vous renseigner la somme a ajouter a votre livret\n" << std::endl;
     std::cout << "Choix 3 : Effectue une Transaction entre vous et un autre client de la banque" << std::endl;
-    std::cout << "- Vous vous connecter a votre compte (s'il exsite sinon vous le creer)";
+    std::cout << "- Vous vous connecter a votre compte (s'il exsite sinon vous le creer) et vous renseignez le nom du client avec qui vous realiser votre transaction" << std::endl;
 }
 
 int main(void) {
@@ -87,6 +123,10 @@ int main(void) {
             case 2: {
                 system("cls");
                 faire_depot(clients);
+            }
+            break;
+            case 3: {
+
             }
             break;
             case 5: {
