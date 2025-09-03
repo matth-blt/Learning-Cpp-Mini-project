@@ -41,38 +41,23 @@ Compte login(std::vector<Compte>& clients) {
 
     if (!found) {
         std::cout << "Compte Inexistant !" << std::endl;
-        std::cout << "---------| CREER VOTRE COMPTE |---------" << std::endl;
-        Compte c = new_client();
-        clients.push_back(c);
+        return creer_compte(clients);
     }
 }
 
+Compte creer_compte(std::vector<Compte>& clients) {
+    std::cout << "---------| CREER VOTRE COMPTE |---------" << std::endl;
+    Compte c = new_client();
+    clients.push_back(c);
+    return c;
+}
+
 void faire_depot(std::vector<Compte>& clients) {
-    int s; 
-    std::string n;
-    std::cout << "---------| LOGIN |---------" << std::endl;
-    std::cout << "Nom du Titulaire : ";
-    std::getline(std::cin >> std::ws, n);
-
-    bool found = false;
-
-    for (auto& c : clients) {
-        if (c.get_titulaire() == n) {
-            std::cout << "Compte Trouvé !" << std::endl;
-            std::cout << "Montant du dépôt : ";
-            std::cin >> s;
-            c.set_solde(c.get_solde() + s);
-            found = true;
-            break;
-        }
-    }
-
-    if (!found) {
-        std::cout << "Compte Inexistant !" << std::endl;
-        std::cout << "---------| CREER VOTRE COMPTE |---------" << std::endl;
-        Compte c = new_client();
-        clients.push_back(c);
-    }
+    int s;
+    Compte c = login(clients);
+    std::cout << "Montant du Depot : " << std::endl;
+    std::cin >> s;
+    c.set_solde(c.get_solde() + s);
 }
 
 void faire_transaction(std::vector<Compte>& clients) {
