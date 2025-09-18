@@ -52,12 +52,12 @@ private:
     int dette;
     bool credit;
 public:
-    int get_solde() { return solde; };
-    void set_solde(int s) { solde = s; };
-    int get_dette() { return dette; };
-    void set_dette(int d) { dette = d; };
-    bool get_credit() { return credit; };
-    void set_credit(int c) { credit = c; };
+    int get_solde() const { return solde; }
+    void set_solde(int s) { solde = s; }
+    int get_dette() const { return dette; }
+    void set_dette(int d) { dette = d; }
+    bool get_credit() const { return credit; }
+    void set_credit(int c) { credit = c; }
     std::string get_titulaire() const { return titulaire; }
     void set_titulaire(std::string n) { titulaire = n; }
 
@@ -74,10 +74,12 @@ public:
     Compte(const std::string& n, int s, int d, bool c) : titulaire(n), solde(s), dette(d), credit(c) {};
 };
 Compte new_client();
-Compte login(std::vector<Compte>& clients);
-Compte creer_compte(std::vector<Compte>& clients);
+Compte& search_account(std::vector<Compte>& clients, std::string& titulaire);
+Compte& login(std::vector<Compte>& clients);
+Compte& creer_compte(std::vector<Compte>& clients);
 void faire_depot(std::vector<Compte>& clients);
 void faire_transaction(std::vector<Compte>& clients);
+void faire_emprunt(std::vector<Compte>& clients, bool eta, int diff);
 void print_help_banque();
 
 #endif
