@@ -74,7 +74,10 @@ public:
     Compte(const std::string& n, int s, int d, bool c) : titulaire(n), solde(s), dette(d), credit(c) {};
 };
 Compte new_client();
+Compte login(std::vector<Compte>& clients);
+Compte creer_compte(std::vector<Compte>& clients);
 void faire_depot(std::vector<Compte>& clients);
+void faire_transaction(std::vector<Compte>& clients);
 void print_help_banque();
 
 #endif
