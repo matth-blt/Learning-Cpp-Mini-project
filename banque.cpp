@@ -1,150 +1,248 @@
 #include "utils.hpp"
+#include <string>
+#include <iostream>
+#include <iomanip>
 
+// ========================= UI / AFFICHAGE =========================
+namespace ui {
+    // ANSI (Windows 10+ / Windows Terminal)
+    static const char* RST  = "\033[0m";
+    static const char* BOLD = "\033[1m";
+    static const char* DIM  = "\033[2m";
+    static const char* IT   = "\033[3m";
+
+    static const char* F_CYAN  = "\033[36m";
+    static const char* F_MAG   = "\033[35m";
+    static const char* F_YEL   = "\033[33m";
+    static const char* F_RED   = "\033[31m";
+    static const char* F_GRN   = "\033[32m";
+    static const char* F_GRY   = "\033[90m";
+
+    inline void clear() { std::system("cls"); }
+
+    inline void hr(int w = 60) {
+        std::cout << F_GRY << "\n" << std::string(w, '\u2500') << RST << "\n"; // ─
+    }
+
+    inline void title(const std::string& t, int w = 60) {
+        std::string label = " " + t + " ";
+        int pad = std::max(0, w - (int)label.size());
+        int left = pad / 2, right = pad - left;
+        std::cout << F_CYAN << "\u250C" << std::string(w, '\u2500') << "\u2510\n"; // ┌───┐
+        std::cout << "\u2502" << std::string(left, ' ') << BOLD << label << RST
+                  << F_CYAN << std::string(right, ' ') << "\u2502\n";             // │ title │
+        std::cout << "\u2514" << std::string(w, '\u2500') << "\u2518" << RST << "\n"; // └───┘
+    }
+
+    inline void section(const std::string& t) {
+        std::cout << F_MAG << BOLD << "\n" << t << RST << "\n";
+    }
+
+    inline void field(const std::string& label) {
+        std::cout << F_YEL << label << RST << " " << IT << "→" << RST << " ";
+    }
+
+    inline void info(const std::string& msg) {
+        std::cout << F_GRN << "✔ " << msg << RST << "\n";
+    }
+    inline void warn(const std::string& msg) {
+        std::cout << F_YEL << "! " << msg << RST << "\n";
+    }
+    inline void error(const std::string& msg) {
+        std::cout << F_RED << "✖ " << msg << RST << "\n";
+    }
+
+    inline void pause_line(int w = 60) {
+        std::cout << F_GRY << std::string(w, '\u2500') << RST << "\n";
+    }
+
+    inline void menu_item(int key, const std::string& label) {
+        std::cout << F_CYAN << "  [" << key << "] " << RST << label << "\n";
+    }
+    inline void menu_item(const std::string& key, const std::string& label) {
+        std::cout << F_CYAN << "  [" << key << "] " << RST << label << "\n";
+    }
+}
+// ==================================================================
+
+// ========================= BANQUE (logique) ========================
 Compte new_client() {
+    ui::title("Nouveau client");
+
     std::string n;
-    std::cout << "Nom : ";
+    ui::field("Nom du titulaire");
     std::getline(std::cin >> std::ws, n);
 
     int s{0}, d{0};
-    std::cout << "Solde (default: 0) : ";
+    ui::field("Solde initial (par défaut: 0)");
     std::cin >> s;
-    std::cout << "Dette (default: 0) : ";
+    ui::field("Dette initiale (par défaut: 0)");
     std::cin >> d;
 
-    bool c{false};
-    if (d != 0) { c = true; }
-    
+    bool c = (d != 0);
+    ui::info("Client créé");
     return Compte(n, s, d, c);
 }
 
 Compte& search_account(std::vector<Compte>& clients, std::string& titulaire) {
-    bool found = false;
-
     for (auto& c : clients) {
         if (c.get_titulaire() == titulaire) {
-            std::cout << "Compte Trouvé !" << std::endl;
+            ui::info("Compte trouvé");
             return c;
-            found = true;
-            break;
         }
     }
-
-    if (!found) {
-        std::cout << "Compte Inexistant !" << std::endl;
-        return creer_compte(clients);
-    }
+    ui::warn("Aucun compte avec ce nom. Création d'un nouveau compte…");
+    return creer_compte(clients);
 }
 
 Compte& login(std::vector<Compte>& clients) {
+    ui::title("Login");
     std::string n;
-    std::cout << "---------| LOGIN |---------" << std::endl;
-    std::cout << "| Nom du Titulaire : ";
+    ui::field("Nom du titulaire");
     std::getline(std::cin >> std::ws, n);
-
     return search_account(clients, n);
 }
 
 Compte& creer_compte(std::vector<Compte>& clients) {
-    std::cout << "+--------| CREER VOTRE COMPTE |--------+" << std::endl;
+    ui::title("Créer votre compte");
     clients.push_back(new_client());
     return clients.back();
 }
 
 void faire_depot(std::vector<Compte>& clients) {
-    int s;
-    Compte c = login(clients);
-    std::cout << "Montant du Depot : " << std::endl;
+    ui::title("Dépôt");
+    Compte& c = login(clients);
+    int s{};
+    ui::field("Montant du dépôt");
     std::cin >> s;
     c.set_solde(c.get_solde() + s);
+    ui::info("Dépôt effectué");
 }
 
 void faire_transaction(std::vector<Compte>& clients) {
+    ui::title("Transaction");
     Compte& titu = login(clients);
-    
+
     std::string nom_receveur;
-    std::cout << std::endl;
-    std::cout << "+--------| TRANSACTION |--------+" << std::endl;
-    std::cout << "| Nom du Receveur : ";
+    ui::field("Nom du receveur");
     std::getline(std::cin >> std::ws, nom_receveur);
     Compte& receveur = search_account(clients, nom_receveur);
 
     int montant{0};
-    std::cout << "\nMontant de la Transaction : ";
+    ui::field("Montant de la transaction");
     std::cin >> montant;
-    
+
     int choice{0};
     bool eta{false};
     if (titu.get_solde() < montant) {
         eta = true;
-        std::cout << "Vous n'avez pas les fonds necessaire pour effectuer cette transaction !\n" << std::endl;
-        std::cout << "+------| VOUS VOULEZ |------+" << std::endl;
-        std::cout << "|1|        Annuler          |" << std::endl;
-        std::cout << "|2|   Faire un Emprunt      |" << std::endl;
-        std::cout << "+---------------------------+" << std::endl;
-        std::cout << "--> ";
+        ui::error("Fonds insuffisants pour cette transaction.");
+        ui::section("Souhaitez-vous…");
+        ui::menu_item(1, "Annuler");
+        ui::menu_item(2, "Faire un emprunt");
+        ui::field("Choix");
         std::cin >> choice;
 
         switch (choice) {
-            case 1: return;
-            break;
-            case 2: { 
-                system("cls"); 
-                faire_emprunt(clients, eta, montant); 
-            }
-            break;
+            case 1:
+                ui::warn("Transaction annulée");
+                return;
+            case 2:
+                ui::clear();
+                faire_emprunt(clients, eta, montant);
+                break;
+            default:
+                ui::warn("Choix invalide – annulation");
+                return;
         }
     } else {
         titu.set_solde(titu.get_solde() - montant);
         receveur.set_solde(receveur.get_solde() + montant);
-        std::cout << "Transaction Effectue" << std::endl;
+        ui::info("Transaction effectuée");
     }
-
 }
 
 void faire_emprunt(std::vector<Compte>& clients, bool eta, int diff) {
+    ui::title("Emprunt");
     Compte& c = login(clients);
 
-    if (eta = true) {
+    if (eta == true) {
         int choice{0};
-        std::cout << "+--------| VOUS VOULEZ |--------+" << std::endl;
-        std::cout << "|1|    Choisir un Montant       |" << std::endl;
-        std::cout << "|2|   Emprunter la Somme Exact  |" << std::endl;
-        std::cout << "+-------------------------------+" << std::endl;
-        std::cout << "--> ";
+        ui::section("Vous voulez…");
+        ui::menu_item(1, "Choisir un montant");
+        ui::menu_item(2, "Emprunter la somme exacte manquante");
+        ui::field("Choix");
         std::cin >> choice;
 
         int val{0};
         switch (choice) {
             case 1: {
-                std::cout << "Votre Montant : ";
+                ui::field("Votre montant");
                 std::cin >> val;
-
                 c.set_solde(c.get_solde() + val);
-                if (c.get_credit() != true) { c.set_credit(true); }
+                if (!c.get_credit()) c.set_credit(true);
+                ui::info("Emprunt enregistré");
+                break;
             }
-            break;
             case 2: {
                 val = diff - c.get_solde();
-                std::cout << "Somme Emprunter : " << val << std::endl;
+                if (val < 0) val = 0;
+                std::cout << ui::F_YEL << "Somme empruntée : " << ui::RST << val << "\n";
+                c.set_dette(c.get_dette() + val);
                 c.set_solde(c.get_solde() + val);
-                if (c.get_credit() != true) { c.set_credit(true); }
+                if (!c.get_credit()) c.set_credit(true);
+                ui::info("Emprunt enregistré");
+                break;
             }
+            default:
+                ui::warn("Choix invalide – annulation");
+                return;
         }
+    } else {
+        int val{0};
+        ui::field("Somme à emprunter");
+        std::cin >> val;
+        c.set_dette(c.get_dette() + val);
+        c.set_solde(c.get_solde() + val);
+        if (!c.get_credit()) c.set_credit(true);
+        ui::info("Emprunt enregistré");
     }
 }
 
 void print_help_banque() {
-    std::cout << "+---------------------------------------------------------------------| HELP |---------------------------------------------------------------------+" << std::endl;
-    std::cout << "|                                                 [Choix 1 : Ajoute un Nouveau Client à la Banque]                                                 |" << std::endl;
-    std::cout << "|                           Vous rentrez le Nom, le Solde (argent sur le compte) et la dette (s'il y a un credit déjà contracté)                   |" << std::endl;
-    std::cout << "+--------------------------------------------------------------------------------------------------------------------------------------------------+" << std::endl;
-    std::cout << "|                                                     [Choix 2 : Effectue un Depot d'argent]                                                       |" << std::endl;
-    std::cout << "|              Vous vous connecter a votre compte (s'il exsite sinon vous le creer) et vous renseigner la somme a ajouter a votre livret           |" << std::endl;
-    std::cout << "+--------------------------------------------------------------------------------------------------------------------------------------------------+" << std::endl;
-    std::cout << "|                                 [Choix 3 : Effectue une Transaction entre vous et un autre client de la banque]                                  |" << std::endl;
-    std::cout << "|                                     Vous vous connecter a votre compte (s'il exsite sinon vous le creer)                                         |" << std::endl;
-    std::cout << "|                                 et vous renseignez le nom du client avec qui vous realiser votre transaction                                     |" << std::endl;
-    std::cout << "+--------------------------------------------------------------------------------------------------------------------------------------------------+" << std::endl;
+    ui::title("Aide — Banque");
+
+    ui::section("[1] Ajouter un client");
+    std::cout << "Crée un nouveau compte. Renseignez : nom, solde initial et dette initiale.\n"
+                 "Si la dette est non nulle, le statut crédit passe à \"oui\".\n";
+    ui::pause_line();
+
+    ui::section("[2] Dépôt");
+    std::cout << "Connexion à votre compte puis ajout d'une somme à votre solde.\n";
+    ui::pause_line();
+
+    ui::section("[3] Transaction");
+    std::cout << "Transfère une somme de votre compte vers celui d'un autre client.\n"
+                 "Si vos fonds sont insuffisants, possibilité d'effectuer un emprunt avant de réessayer.\n";
+    ui::pause_line();
+
+    ui::section("[4] Emprunt");
+    std::cout << "Permet d'emprunter une somme. Deux options :\n"
+                 "  • choisir librement le montant,\n"
+                 "  • emprunter exactement la somme manquante pour une opération en cours.\n"
+                 "La somme empruntée s'ajoute au solde et à la dette; le statut crédit passe à \"oui\".\n";
+    ui::pause_line();
+
+    ui::section("[5] Afficher clients");
+    std::cout << "Affiche la liste des comptes avec : titulaire, solde, dette et statut crédit.\n";
+    ui::pause_line();
+
+    ui::section("[0] Quitter");
+    std::cout << "Ferme le programme.\n";
+    ui::pause_line();
+
+    ui::section("[-1] Aide");
+    std::cout << "Affiche cet écran d'aide.\n";
 }
 
 int main(void) {
@@ -152,50 +250,64 @@ int main(void) {
     std::vector<Compte> clients;
 
     do {
-        std::cout << "+--------| BANQUE |--------+" << std::endl;
-        std::cout << "|1|    Ajouter Client      |" << std::endl;
-        std::cout << "|2|        Depot           |" << std::endl;
-        std::cout << "|3|     Transaction        |" << std::endl;
-        std::cout << "|4|       Emprunt          |" << std::endl;
-        std::cout << "|5|   Afficher Clients     |" << std::endl;
-        std::cout << "|0|        Exit            |" << std::endl;
-        std::cout << "|-1|       Help            |" << std::endl;
-        std::cout << "+--------------------------+" << std::endl;
-        std::cout << "--> ";
+        ui::title("BANQUE");
+        ui::menu_item(1, "Ajouter un client");
+        ui::menu_item(2, "Dépôt");
+        ui::menu_item(3, "Transaction");
+        ui::menu_item(4, "Emprunt");
+        ui::menu_item(5, "Afficher les clients");
+        ui::menu_item("-1", "Aide");
+        ui::menu_item(0, "Quitter");
+        ui::hr();
+        ui::field("Choix");
         std::cin >> choice;
-        system("cls");
+        ui::clear();
 
         switch (choice) {
             case 1: {
-                Compte c = new_client();
-                clients.push_back(c);
-                system("cls");
+                clients.push_back(new_client());
+                ui::clear();
+                break;
             }
-            break;
             case 2: {
-                system("cls");
+                ui::clear();
                 faire_depot(clients);
+                break;
             }
-            break;
             case 3: {
-                system("cls");
+                ui::clear();
                 faire_transaction(clients);
+                break;
             }
-            break;
+            case 4: {
+                ui::clear();
+                bool eta = false;
+                int diff = 0;
+                faire_emprunt(clients, eta, diff);
+                break;
+            }
             case 5: {
+                ui::title("Clients");
                 int i = 1;
                 for (const auto& c : clients) {
-                    std::cout << "+---------------------| Client n°" << i << " |---------------------+" << std::endl;
+                    std::cout << ui::F_CYAN << "#" << i << ": " << ui::RST;
                     c.afficher();
-                    std::cout << "+--------------------------------------------------------+" << std::endl;
-                    std::cout << std::endl;
-                    i++;
+                    ++i;
                 }
+                ui::pause_line();
+                break;
             }
-            break;
-            case -1: print_help_banque(); break;
+            case -1:
+                print_help_banque();
+                break;
+            case 0:
+                break;
+            default:
+                ui::warn("Choix invalide");
+                break;
         }
     } while (choice != 0);
 
+    ui::info("À bientôt.");
     return 0;
 }
