@@ -95,48 +95,91 @@ Compte& search_account(std::vector<Compte>& clients, std::string& titulaire) {
     return creer_compte(clients);
 }
 
-Compte& login(std::vector<Compte>& clients) {
+// Compte& login(std::vector<Compte>& clients) {
+//     ui::title("Login");
+//     std::string n;
+//     ui::field("Nom du titulaire");
+//     std::getline(std::cin >> std::ws, n);
+//     return search_account(clients, n);
+// }
+
+static Compte* login_auth(std::vector<Compte>& clients) {
     ui::title("Login");
-    std::string n;
+    std::string nom, pw;
+
     ui::field("Nom du titulaire");
-    std::getline(std::cin >> std::ws, n);
-    return search_account(clients, n);
+    std::getline(std::cin >> std::ws, nom);
+
+    if (!find_client(clients, nom)) {
+        ui::error("Compte inexistant.");
+        return nullptr;
+    }
+
+    ui::field("Mot de passe");
+    std::getline(std::cin, pw);
+
+    if (!verify_password(nom, pw)) {
+        ui::error("Mot de passe incorrect.");
+        return nullptr;
+    }
+
+    ui::info("Authentification réussie");
+    return find_client(clients, nom);
 }
+
 
 Compte& creer_compte(std::vector<Compte>& clients) {
     ui::title("Créer votre compte");
     clients.push_back(new_client());
-    return clients.back();
+    auto& acc = clients.back();
+    g_idx[acc.get_titulaire()] = clients.size() - 1;
+
+    std::string pw1, pw2;
+    do {
+        ui::field("Mot de passe");
+        std::getline(std::cin >> std::ws, pw1);
+        ui::field("Confirmer le mot de passe");
+        std::getline(std::cin, pw2);
+        if (pw1 != pw2) ui::warn("Les mots de passe ne correspondent pas. Réessayez.");
+    } while (pw1 != pw2);
+
+    g_pwdhash[acc.get_titulaire()] = weak_hash(acc.get_titulaire() + ":" + pw1);
+    ui::info("Compte créé et mot de passe enregistré");
+    return acc;
 }
 
 void faire_depot(std::vector<Compte>& clients) {
     ui::title("Dépôt");
-    Compte& c = login(clients);
-    int s{};
-    ui::field("Montant du dépôt");
-    std::cin >> s;
-    c.set_solde(c.get_solde() + s);
-    ui::info("Dépôt effectué");
+    if (Compte* c = login_auth(clients)) {
+        int s{};
+        ui::field("Montant du dépôt");
+        std::cin >> s;
+        c->set_solde(c->get_solde() + s);
+        ui::info("Dépôt effectué");
+    } else {
+        ui::warn("Opération annulée.");
+    }
 }
 
 void faire_transaction(std::vector<Compte>& clients) {
     ui::title("Transaction");
-    Compte& titu = login(clients);
+    Compte* titu = login_auth(clients);
+    if (!titu) { ui::warn("Opération annulée."); return; }
 
     std::string nom_receveur;
     ui::field("Nom du receveur");
     std::getline(std::cin >> std::ws, nom_receveur);
-    Compte& receveur = search_account(clients, nom_receveur);
+
+    Compte* receveur = find_client(clients, nom_receveur);
+    if (!receveur) { ui::error("Receveur introuvable."); return; }
 
     int montant{0};
     ui::field("Montant de la transaction");
     std::cin >> montant;
 
     int choice{0};
-    bool eta{false};
-    if (titu.get_solde() < montant) {
-        eta = true;
-        ui::error("Fonds insuffisants pour cette transaction.");
+    if (titu->get_solde() < montant) {
+        ui::error("Fonds insuffisants.");
         ui::section("Souhaitez-vous…");
         ui::menu_item(1, "Annuler");
         ui::menu_item(2, "Faire un emprunt");
@@ -149,22 +192,23 @@ void faire_transaction(std::vector<Compte>& clients) {
                 return;
             case 2:
                 ui::clear();
-                faire_emprunt(clients, eta, montant);
+                faire_emprunt(clients, true, montant);
                 break;
             default:
                 ui::warn("Choix invalide – annulation");
                 return;
         }
     } else {
-        titu.set_solde(titu.get_solde() - montant);
-        receveur.set_solde(receveur.get_solde() + montant);
+        titu->set_solde(titu->get_solde() - montant);
+        receveur->set_solde(receveur->get_solde() + montant);
         ui::info("Transaction effectuée");
     }
 }
 
 void faire_emprunt(std::vector<Compte>& clients, bool eta, int diff) {
     ui::title("Emprunt");
-    Compte& c = login(clients);
+    Compte* c = login_auth(clients);
+    if (!c) { ui::warn("Opération annulée."); return; }
 
     if (eta == true) {
         int choice{0};
@@ -179,18 +223,18 @@ void faire_emprunt(std::vector<Compte>& clients, bool eta, int diff) {
             case 1: {
                 ui::field("Votre montant");
                 std::cin >> val;
-                c.set_solde(c.get_solde() + val);
-                if (!c.get_credit()) c.set_credit(true);
+                c->set_solde(c->get_solde() + val);
+                if (!c->get_credit()) c->set_credit(true);
                 ui::info("Emprunt enregistré");
                 break;
             }
             case 2: {
-                val = diff - c.get_solde();
+                val = diff - c->get_solde();
                 if (val < 0) val = 0;
                 std::cout << ui::F_YEL << "Somme empruntée : " << ui::RST << val << "\n";
-                c.set_dette(c.get_dette() + val);
-                c.set_solde(c.get_solde() + val);
-                if (!c.get_credit()) c.set_credit(true);
+                c->set_dette(c->get_dette() + val);
+                c->set_solde(c->get_solde() + val);
+                if (!c->get_credit()) c->set_credit(true);
                 ui::info("Emprunt enregistré");
                 break;
             }
@@ -202,9 +246,9 @@ void faire_emprunt(std::vector<Compte>& clients, bool eta, int diff) {
         int val{0};
         ui::field("Somme à emprunter");
         std::cin >> val;
-        c.set_dette(c.get_dette() + val);
-        c.set_solde(c.get_solde() + val);
-        if (!c.get_credit()) c.set_credit(true);
+        c->set_dette(c->get_dette() + val);
+        c->set_solde(c->get_solde() + val);
+        if (!c->get_credit()) c->set_credit(true);
         ui::info("Emprunt enregistré");
     }
 }
@@ -245,6 +289,23 @@ void print_help_banque() {
     std::cout << "Affiche cet écran d'aide.\n";
 }
 
+static std::string weak_hash(const std::string& s) {
+    return std::to_string(std::hash<std::string>{}(s));
+}
+
+static Compte* find_client(std::vector<Compte>& clients, const std::string& nom) {
+    auto it = g_idx.find(nom);
+    if (it == g_idx.end()) return nullptr;
+    return &clients[it->second];
+}
+
+static bool verify_password(const std::string& nom, const std::string& pw) {
+    auto it = g_pwdhash.find(nom);
+    if (it == g_pwdhash.end()) return false;
+    return it->second == weak_hash(nom + ":" + pw);
+}
+
+
 int main(void) {
     int choice;
     std::vector<Compte> clients;
@@ -265,7 +326,8 @@ int main(void) {
 
         switch (choice) {
             case 1: {
-                clients.push_back(new_client());
+                // clients.push_back(new_client());
+                creer_compte(clients);
                 ui::clear();
                 break;
             }

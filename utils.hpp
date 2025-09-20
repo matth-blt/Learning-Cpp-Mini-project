@@ -11,6 +11,9 @@
 #include <cstdio>
 #include <fstream>
 #include <vector>
+#include <unordered_map>
+#include <functional>
+#include <string>
 
 // ------------------------ Calculator --------------------------
 int addition(int a, int b);
@@ -75,11 +78,19 @@ public:
 };
 Compte new_client();
 Compte& search_account(std::vector<Compte>& clients, std::string& titulaire);
-Compte& login(std::vector<Compte>& clients);
+// Compte& login(std::vector<Compte>& clients);
+static Compte* login_auth(std::vector<Compte>& clients);
 Compte& creer_compte(std::vector<Compte>& clients);
 void faire_depot(std::vector<Compte>& clients);
 void faire_transaction(std::vector<Compte>& clients);
 void faire_emprunt(std::vector<Compte>& clients, bool eta, int diff);
 void print_help_banque();
+// Index et “base” d’auth (éducatif)
+static std::unordered_map<std::string, std::size_t> g_idx;
+static std::unordered_map<std::string, std::string> g_pwdhash;
+// Hash pédagogique
+static std::string weak_hash(const std::string& s);
+static Compte* find_client(std::vector<Compte>& clients, const std::string& nom);
+static bool verify_password(const std::string& nom, const std::string& pw);
 
 #endif
