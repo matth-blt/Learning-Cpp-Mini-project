@@ -3,6 +3,8 @@
 int main(void) {
     // PARTIE 1
     std::cout << "---------| PARTIE 1 |---------" << std::endl;
+    std::cout << "Nombre d'Animaux : " << Animal::getNbAnimaux() << std::endl;
+    
     Animal a1{20, 30, 100};
     Animal *a2 = new Animal{40, 50, 100};
     Animal tab_a[kTaille] = { {30, 40, 100}, {10, 20, 100}, {50, 60, 100}, {70, 80, 100} };
@@ -37,6 +39,6 @@ int main(void) {
     delete[] tab_b;
 
     std::cout << "Nombre d'Animaux : " << Animal::getNbAnimaux() << std::endl;
-    
+
     return 0;
 }

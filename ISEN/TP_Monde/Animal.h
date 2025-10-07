@@ -1,5 +1,5 @@
-#ifndef POINT_H
-#define POINT_H
+#ifndef ANIMAL_H
+#define ANIMAL_H
 
 #include <iostream>
 
@@ -12,21 +12,25 @@ public:
     Animal(const Animal& a) : x{a.x}, y{a.y}, energie{a.energie} { nb_animaux++; }
     ~Animal() { nb_animaux--; };
 
-    int getX() const;
-    int getY() const;
-    int getEnergie() const;
+    int getX() const { return x; }
+    int getY() const { return y; }
+    int getEnergie() const { return energie; }
     static int getNbAnimaux() { return nb_animaux; }
     static char getLettre() { return nb_animaux; }
-    void setX(int x_init);
-    void setY(int y_init);
-    void setEnergie(int e_init);
+    void setX(int x_init) { x = x_init; }
+    void setY(int y_init) { y = y_init; }
+    void setEnergie(int e_init) { energie = e_init; }
     static void setNbAnimaux(int nb) { nb_animaux = nb; }
-    void affiche() const;
+    void affiche() const { 
+        std::cout << "{" << x 
+                << ", " << y 
+                << ", " << energie
+                << "}" << std::endl;
+    }
 private:
     int x;
     int y;
     int energie;
-    static inline const char lettre{'A'}; 
     static inline int nb_animaux{0};
 };
 

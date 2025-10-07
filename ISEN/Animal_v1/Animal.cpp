@@ -9,6 +9,7 @@ void Animal::setEnergie(int e_init) { energie = e_init; }
 void Animal::affiche() const { 
     std::cout << "{" << x 
               << ", " << y 
-              << ", " << energie 
+              << ", " << energie
+              << ", " << lettre
               << "}" << std::endl;
 }
