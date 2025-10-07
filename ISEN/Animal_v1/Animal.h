@@ -6,12 +6,11 @@
 const int kTaille = 4;
 
 class Animal {
-private:
-    int x;
-    int y;
-    int energie;
-    static inline int nb_animaux{0};
 public:
+    Animal() : x{0}, y{0}, energie{0} {}
+    Animal(int x_init, int y_init, int e_init) : x{x_init}, y{y_init}, energie{e_init} { nb_animaux++; }
+    ~Animal() { nb_animaux--; };
+
     int getX() const;
     int getY() const;
     int getEnergie() const;
@@ -21,10 +20,11 @@ public:
     void setEnergie(int e_init);
     static void setNbAnimaux(int nb) { nb_animaux = nb; }
     void affiche() const;
-
-    Animal() : x{0}, y{0}, energie{0} {}
-    Animal(int x_init, int y_init, int e_init) : x{x_init}, y{y_init}, energie{e_init} {}
-    ~Animal() = default;
+private:
+    int x;
+    int y;
+    int energie;
+    static inline int nb_animaux{0};
 };
 
 #endif

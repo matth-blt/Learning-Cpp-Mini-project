@@ -30,11 +30,13 @@ int main(void) {
 
     std::cout << std::endl;
     // PARTIE 2
-    Animal::setNbAnimaux(2);
     std::cout << "---------| PARTIE 2 |---------\n"
               << "Nombre d'Animaux : " << Animal::getNbAnimaux() << std::endl;
 
     delete a2;
     delete[] tab_b;
+
+    std::cout << "Nombre d'Animaux : " << Animal::getNbAnimaux() << std::endl;
+    
     return 0;
 }
